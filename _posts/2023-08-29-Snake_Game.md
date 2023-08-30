@@ -8,6 +8,7 @@ type: tangibles
 courses: { compsci: {week: 0} }
 ---
 
+
 <style>
 
     body{
@@ -20,8 +21,8 @@ courses: { compsci: {week: 0} }
     canvas{
         display: none;
         border-style: solid;
-        border-width: 10px;
-        border-color: #FFFFFF;
+        border-width: 50px;
+        border-color: #000000;
     }
     canvas:focus{
         outline: none;
@@ -74,6 +75,10 @@ courses: { compsci: {week: 0} }
 
 
 <div class="container">
+    <header class="pb-3 mb-4 border-bottom border-primary text-dark">
+        <p class="fs-4">Snake score: <span id="score_value">0</span></p>
+        <p>Highest Score: <span id="highest_score">0</span></p>
+    </header>
     <div class="container bg-secondary" style="text-align:center;">
         <!-- Main Menu -->
         <div id="menu" class="py-4 text-light">
@@ -215,73 +220,101 @@ courses: { compsci: {week: 0} }
         }
         /* Snake is on the Go (Driver Function)  */
         /////////////////////////////////////////////////////////////
-        let mainLoop = function(){
+        let mainLoop = function() {
             let _x = snake[0].x;
             let _y = snake[0].y;
-            snake_dir = snake_next_dir;   // read async event key
+            snake_dir = snake_next_dir;
+
             // Direction 0 - Up, 1 - Right, 2 - Down, 3 - Left
-            switch(snake_dir){
+            switch (snake_dir) {
                 case 0: _y--; break;
                 case 1: _x++; break;
                 case 2: _y++; break;
                 case 3: _x--; break;
             }
-            snake.pop(); // tail is removed
-            snake.unshift({x: _x, y: _y}); // head is new in new position/orientation
+
+            snake.pop();
+            snake.unshift({ x: _x, y: _y });
+
             // Wall Checker
-            if(wall === 1){
+            if (wall === 1) {
                 // Wall on, Game over test
-                if (snake[0].x < 0 || snake[0].x === canvas.width / BLOCK || snake[0].y < 0 || snake[0].y === canvas.height / BLOCK){
+                if (snake[0].x < 0 || snake[0].x === canvas.width / BLOCK || snake[0].y < 0 || snake[0].y === canvas.height / BLOCK) {
                     showScreen(SCREEN_GAME_OVER);
                     return;
                 }
-            }else{
+            } else {
                 // Wall Off, Circle around
-                for(let i = 0, x = snake.length; i < x; i++){
-                    if(snake[i].x < 0){
+                for (let i = 0, x = snake.length; i < x; i++) {
+                    if (snake[i].x < 0) {
                         snake[i].x = snake[i].x + (canvas.width / BLOCK);
                     }
-                    if(snake[i].x === canvas.width / BLOCK){
+                    if (snake[i].x === canvas.width / BLOCK) {
                         snake[i].x = snake[i].x - (canvas.width / BLOCK);
                     }
-                    if(snake[i].y < 0){
+                    if (snake[i].y < 0) {
                         snake[i].y = snake[i].y + (canvas.height / BLOCK);
                     }
-                    if(snake[i].y === canvas.height / BLOCK){
+                    if (snake[i].y === canvas.height / BLOCK) {
                         snake[i].y = snake[i].y - (canvas.height / BLOCK);
                     }
                 }
             }
+
             // Snake vs Snake checker
-            for(let i = 1; i < snake.length; i++){
+            for (let i = 1; i < snake.length; i++) {
                 // Game over test
-                if (snake[0].x === snake[i].x && snake[0].y === snake[i].y){
+                if (snake[0].x === snake[i].x && snake[0].y === snake[i].y) {
                     showScreen(SCREEN_GAME_OVER);
                     return;
                 }
             }
+
             // Snake eats food checker
-            if(checkBlock(snake[0].x, snake[0].y, food.x, food.y)){
-                snake[snake.length] = {x: snake[0].x, y: snake[0].y};
+            if (checkBlock(snake[0].x, snake[0].y, food.x, food.y)) {
+                snake[snake.length] = { x: snake[0].x, y: snake[0].y };
                 altScore(++score);
                 addFood();
                 activeDot(food.x, food.y);
             }
+
             // Repaint canvas
             ctx.beginPath();
-            ctx.fillStyle = "royalblue";
+            ctx.fillStyle = "grey";
             ctx.fillRect(0, 0, canvas.width, canvas.height);
+
+            // Draw grid lines
+            ctx.strokeStyle = "#CCCCCC"; // Grid line color
+            for (let x = 0; x < canvas.width; x += BLOCK) {
+                ctx.moveTo(x, 0);
+                ctx.lineTo(x, canvas.height);
+            }
+            for (let y = 0; y < canvas.height; y += BLOCK) {
+                ctx.moveTo(0, y);
+                ctx.lineTo(canvas.width, y);
+            }
+            ctx.stroke();
+
+            // Define rainbow colors
+            const snakeColors = ["black", "red", "red", "black", "white", "black"];
+
             // Paint snake
-            for(let i = 0; i < snake.length; i++){
+            for (let i = 0; i < snake.length; i++) {
+                ctx.fillStyle = snakeColors[i % snakeColors.length];
                 activeDot(snake[i].x, snake[i].y);
             }
+
             // Paint food
+            ctx.fillStyle = "purple"; // Set the food color (you can change this)
             activeDot(food.x, food.y);
-            // Debug
-            //document.getElementById("debug").innerHTML = snake_dir + " " + snake_next_dir + " " + snake[0].x + " " + snake[0].y;
-            // Recursive call after speed delay, déjà vu
+
+            // ...
+
             setTimeout(mainLoop, snake_speed);
-        }
+        };
+
+
+
         /* New Game setup */
         /////////////////////////////////////////////////////////////
         let newGame = function(){
@@ -299,7 +332,24 @@ courses: { compsci: {week: 0} }
             addFood();
             // activate canvas event
             canvas.onkeydown = function(evt) {
-                changeDir(evt.keyCode);
+                switch (evt.keyCode) {
+                    case 65: // A key (left) or Left arrow key
+                    case 37: // Left arrow key
+                        changeDir(37);
+                        break;
+                    case 87: // W key (up) or Up arrow key
+                    case 38: // Up arrow key
+                        changeDir(38);
+                        break;
+                    case 68: // D key (right) or Right arrow key
+                    case 39: // Right arrow key
+                        changeDir(39);
+                        break;
+                    case 83: // S key (down) or Down arrow key
+                    case 40: // Down arrow key
+                        changeDir(40);
+                        break;
+                }
             }
             mainLoop();
         }
@@ -328,10 +378,10 @@ courses: { compsci: {week: 0} }
         }
         /* Dot for Food or Snake part */
         /////////////////////////////////////////////////////////////
-        let activeDot = function(x, y){
-            ctx.fillStyle = "#FFFFFF";
+        let activeDot = function(x, y, color) {
+            ctx.fillStyle = color;
             ctx.fillRect(x * BLOCK, y * BLOCK, BLOCK, BLOCK);
-        }
+        };
         /* Random food placement */
         /////////////////////////////////////////////////////////////
         let addFood = function(){
@@ -350,9 +400,13 @@ courses: { compsci: {week: 0} }
         }
         /* Update Score */
         /////////////////////////////////////////////////////////////
-        let altScore = function(score_val){
+        let altScore = function(score_val) {
             ele_score.innerHTML = String(score_val);
-        }
+            if (score_val > highestScore) {
+                highestScore = score_val;
+                displayHighScore(); // Call the function to update the displayed highest score
+            }
+        };
         /////////////////////////////////////////////////////////////
         // Change the snake speed...
         // 150 = slow
@@ -367,5 +421,12 @@ courses: { compsci: {week: 0} }
             if(wall === 0){screen_snake.style.borderColor = "#606060";}
             if(wall === 1){screen_snake.style.borderColor = "#FFFFFF";}
         }
+        // Function to display the highest score
+        function displayHighScore() {
+            const highScoreElement = document.getElementById("highest_score");
+            highScoreElement.innerHTML = highestScore;
+        }
+
+        let highestScore = 0;
     })();
 </script>
