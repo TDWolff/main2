@@ -296,7 +296,7 @@ courses: { compsci: {week: 0} }
             ctx.stroke();
 
             // Define rainbow colors
-            const snakeColors = ["black", "red", "red", "black", "white", "black"];
+            const snakeColors = ["black", "black"];
 
             // Paint snake
             for (let i = 0; i < snake.length; i++) {
