@@ -5,7 +5,7 @@ layout: post
 title: My Expierience
 description: This Is Going To Explain My Expieriences And My Struggles
 type: plans
-courses: { csp: {week: 1, categories: [4.A]} }
+courses: { compsci: {week: 0} }
 ---
 
 ### Week 1
