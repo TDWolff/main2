@@ -5,7 +5,7 @@ layout: post
 title: Calculator
 description: This is a calculator made in .md format with JavaScript.
 type: tangibles
-courses: { compsci: {week: 1} }
+courses: { compsci: {week: 2} }
 ---
 
 <!-- 

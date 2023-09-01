@@ -5,7 +5,7 @@ layout: post
 title: Snake Game
 description: This is an example of the game snake in .md.
 type: hacks
-courses: { compsci: {week: 1} }
+courses: { compsci: {week: 2} }
 ---
 
 
