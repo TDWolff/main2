@@ -4,7 +4,7 @@ comments: false
 layout: post
 title: Snake Game
 description: This is an example of the game snake in .md.
-type: hacks
+type: tangibles
 courses: { compsci: {week: 2} }
 ---
 
