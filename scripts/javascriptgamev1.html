@@ -1,0 +1,107 @@
+<!DOCTYPE html>
+<html>
+<head>
+<style>
+    .container {
+        position: relative;
+        width: 100px; /* Adjust as needed */
+        height: 100px; /* Adjust as needed */
+    }
+
+    .cube {
+        width: 30px;
+        height: 30px;
+        background-color: red;
+        position: absolute;
+        bottom: 0;
+    }
+
+    .pipe {
+        width: 20px;
+        height: 100px; /* Adjust as needed */
+        background-color: green;
+        position: absolute;
+        bottom: 0;
+        right: 0;
+    }
+</style>
+</head>
+<body>
+<div class="container">
+    <div class="cube" id="cube"></div>
+</div>
+<div class="pipe" id="pipe"></div>
+<button onclick="jump()">Jump</button>
+
+<script>
+var cubeElement = document.getElementById('cube');
+var pipeElement = document.getElementById('pipe');
+var gravity = 0.1;
+var jumpStrength = -2;
+var isJumping = false;
+
+function jump() {
+    if (!isJumping) {
+        isJumping = true;
+        animateJump();
+    }
+}
+
+function animateJump() {
+    var position = parseFloat(getComputedStyle(cubeElement).bottom) || 0;
+    var jumpHeight = 60; // Adjust the jump height as needed
+    var jumpDuration = 1000; // Adjust the jump duration as needed
+    var startTime = null;
+
+    function step(timestamp) {
+        if (!startTime) startTime = timestamp;
+        var progress = timestamp - startTime;
+        position = Math.max(0, Math.min(jumpHeight, (progress / jumpDuration) * jumpHeight));
+        cubeElement.style.bottom = position + 'px';
+
+        if (progress < jumpDuration) {
+            requestAnimationFrame(step);
+        } else {
+            setTimeout(function() {
+                animateFall();
+            }, 0);
+        }
+    }
+
+    requestAnimationFrame(step);
+}
+
+function animateFall() {
+    var position = parseFloat(getComputedStyle(cubeElement).bottom) || 0;
+    var fallDuration = 1000; // Adjust the fall duration as needed
+    var startTime = null;
+
+    function step(timestamp) {
+        if (!startTime) startTime = timestamp;
+        var progress = timestamp - startTime;
+        position = Math.min(0, (progress / fallDuration) * jumpHeight);
+        cubeElement.style.bottom = position + 'px';
+
+        if (progress < fallDuration) {
+            requestAnimationFrame(step);
+        } else {
+            isJumping = false;
+        }
+    }
+
+    requestAnimationFrame(step);
+}
+
+function movePipe() {
+    var pipePosition = parseFloat(getComputedStyle(pipeElement).right) || 0;
+    var pipeSpeed = 1; // Adjust the speed as needed
+    pipePosition -= pipeSpeed;
+    pipeElement.style.right = pipePosition + 'px';
+    requestAnimationFrame(movePipe);
+}
+
+// Start moving the pipe
+movePipe();
+</script>
+</body>
+</html>
