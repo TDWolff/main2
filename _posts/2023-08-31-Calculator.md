@@ -4,7 +4,7 @@ comments: false
 layout: post
 title: Calculator
 description: This is a calculator made in .md format with JavaScript.
-type: tangibles
+type: hacks
 courses: { compsci: {week: 2} }
 ---
 
